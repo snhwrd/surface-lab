@@ -98,6 +98,7 @@ function renderCircuitPlayground(root, importedCircuit=null){
   root.querySelector('#downloadcircuitcsv').onclick=()=>{if(!sampleRows)return;const width=sampleRows[0]?.length||0;const header=['shot',...Array.from({length:width},(_,i)=>'m'+i)].join(',');download(header+'\n'+sampleRows.map((bits,i)=>[i,...bits].join(',')).join('\n')+'\n','stim-shot-records.csv');};
   root.querySelector('#diagramfit').onclick=()=>{zoom=null;applyZoom();};root.querySelector('#diagramzoomin').onclick=()=>{zoom=Math.min(4,(zoom??1)*1.25);applyZoom();};root.querySelector('#diagramzoomout').onclick=()=>{zoom=Math.max(.25,(zoom??1)/1.25);applyZoom();};
   circuitPlaygroundSession={dispose(){disposed=true;clearTimeout(timer);terminate('Playground closed.');if(svgUrl)URL.revokeObjectURL(svgUrl);}};
+  if(importedCircuit){const key=Object.keys(tutorialCircuits()).find(key=>tutorialCircuits()[key].text===importedCircuit.text);if(key){const links=document.createElement('section');links.className='panel';links.innerHTML=tutorialCircuitSourceLinks(key);root.append(links);}}
   validate();
 }
 if(typeof module!=='undefined')module.exports={circuitOutcomeCounts,circuitPlaygroundPresets};

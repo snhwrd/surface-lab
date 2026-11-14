@@ -114,3 +114,5 @@ After building, run `node tests/stim-wasm.cjs` and `node tests/pages-compat.cjs`
 All tutorial Stim circuits have “Open in circuit playground” links beside the relevant steps and complete examples. Links load standalone Stim instructions, including both inserted-error cases, cumulative manual construction stages and the distance/noise sweep circuits. Circuit links can be bookmarked or shared and work under a GitHub Pages project subpath. The playground samples raw measurements; Python/PyMatching analysis stays in the downloaded scripts. Run `node tests/tutorial-circuits.cjs` to verify the linked circuits.
 
 Resources is available from the shared footer on every view. Circuit diagrams uses the same catalog as the tutorial playground links, showing every circuit with its native Stim diagram, source instructions, `.stim` download, and playground link.
+
+Each circuit card also links back to the tutorial steps that use it. These links select the relevant step or check type and scroll to the example. Imported circuits in the playground include the same tutorial links.

@@ -15,7 +15,7 @@ function openLesson(i){
   document.getElementById('lessonpage').innerHTML=`<button class="outline" id="back">← Learning path</button><div style="margin-top:28px" class="eyebrow">TUTORIAL 0${i+1} OF 06 · ${l.time} MIN</div><h1>${l.title}</h1><p>${l.desc}</p><div class="lessonbody"><section class="panel"><h3>The idea</h3><p>${l.body}</p>${[1,2,4].includes(i)?'<button class="outline notationlink" data-open-notation>Read the stabilizer notation guide →</button>':''}<h3 style="margin-top:28px">Try it yourself</h3><p>${l.task}</p>${i===0?'<div id="pythonguide"></div>':''}${i===1?stabilizerComparison():''}${i===2?'<div id="latticeconstruction"></div>':''}${i===3?'<div id="circuitguide"></div>':''}${i===4?'<div id="decodeguide"></div>':''}${i===5?'<div id="testguide"></div>':''}<div class="codebar"><span>COMPLETE PYTHON EXAMPLE · RUN LOCALLY WITH UV</span><button class="outline" id="download">Download .py ↓</button></div><pre>${escapeHTML(l.code)}</pre>${tutorialCircuitLinks(lessonCircuitKeys(i))}<div class="notice">These Python examples run on your computer. The lattice playground runs directly in your browser.</div>${i===1?'<section id="surfacechecklesson" class="surfacechecklesson"></section>':''}</section></div><section class="panel tutorialquiz" id="tutorialquiz" aria-label="${l.title}: five-question quiz"></section>`;
   show('lesson');document.getElementById('back').onclick=()=>show('overview');document.getElementById('download').onclick=()=>download(l.code,`tutorial_${i+1}.py`);
   if(i===0)renderPythonGuide(document.getElementById('pythonguide'));
-  if(i===1)renderSurfaceCheck(document.getElementById('surfacechecklesson'));
+  if(i===1){renderSurfaceCheck(document.getElementById('surfacechecklesson'));const extra=document.createElement('section');extra.id='twodataxcheck';extra.innerHTML='<h3>Two-data X parity check</h3>'+circuitFigure(2)+tutorialCircuitLinks(['x-parity']);document.getElementById('surfacechecklesson').before(extra);}
   if(i===2)renderLatticeConstruction(document.getElementById('latticeconstruction'));
   if(i===3)renderCircuitGuide(document.getElementById('circuitguide'));
   if(i===4)renderDecodeGuide(document.getElementById('decodeguide'));
@@ -146,3 +146,22 @@ window.addEventListener('hashchange',followFooterAndGalleryLink);
 followFooterAndGalleryLink();
 
 document.querySelector('[data-footer-resources]').onclick=event=>{event.preventDefault();if(location.hash!=='#resources')history.pushState(null,'','#resources');view('resources');};
+
+function followCircuitSourceLink(){
+  const match=location.hash.match(/^#tutorial-circuit\/([a-zA-Z0-9.-]+)\/(\d+)$/);if(!match)return;
+  const key=match[1],source=tutorialCircuitSources(key)[Number(match[2])];if(!source)return;
+  openLesson(source.lesson);
+  let target;
+  if(source.step!==undefined){
+    const prefix={0:'python',2:'construction',3:'circuit',4:'decode',5:'test'}[source.lesson];
+    document.querySelector(`[data-${prefix}-step="${source.step}"]`)?.click();
+    target=document.querySelector({0:'#pythonguidestep',2:'#constructiontext',3:'#circuitguidestep',4:'#decodeguidestep',5:'#testguidestep'}[source.lesson]);
+  }else{
+    if(key.startsWith('bulk-')){const select=document.querySelector('#bulkchecktype');select.value=key.split('-')[1];select.dispatchEvent(new Event('change'));}
+    target=document.querySelector(`${key.startsWith('bulk-')?'#bulkcheckexample':'#lessonpage'} [data-tutorial-circuit="${key}"]`)?.closest('section');
+  }
+  target?.scrollIntoView({block:'start'});
+}
+document.addEventListener('click',event=>{const link=event.target.closest('[data-circuit-source]');if(!link)return;event.preventDefault();history.pushState(null,'',link.getAttribute('href'));followCircuitSourceLink();});
+window.addEventListener('hashchange',followCircuitSourceLink);
+followCircuitSourceLink();
