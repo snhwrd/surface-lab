@@ -36,6 +36,7 @@ node --check web/surface-view.js
 node --check web/lattice-lesson.js
 node --check web/surface-check.js
 node --check web/circuit-guide.js
+node --check web/decode-guide.js
 node tests/lattice.cjs
 node tests/lattice-schedule.cjs
 ```
@@ -79,3 +80,7 @@ The “Think in stabilizers” lesson also connects its two-data-qubit example t
 ## Guided circuit construction
 
 Tutorial 4 continues the exact patch mapping and four-layer schedule from Tutorial 3 in eight steps. It builds a noiseless round manually, preserves the data over repeated ancilla readouts, and checks raw measurement changes and final logical-Z parity. Review buttons open the corresponding earlier construction step. It then introduces a separate Stim-generated memory circuit with detector and observable annotations, explains the convention difference, and adds Clifford depolarization before handing off to decoding. Run `uv run python examples/construct_circuit.py` for the complete executable example; the same content is downloadable in the tutorial.
+
+## Guided detection and decoding
+
+Tutorial 5 traces the annotated generated memory circuit through a noiseless baseline, noisy detector sampling, detector-error-model construction, matching, logical-flip prediction, and failure-rate reporting. An illustrative shot selector separates detector events from decoding failures, and review buttons open the relevant circuit-guide step. Run `uv run python examples/detect_decode.py` for the complete 10,000-shot example. Ground-truth observable flips are used only for evaluation, not as decoder inputs. The reported logical-Z memory error rate is per complete experiment, not a full logical-channel benchmark or a per-round error rate.
