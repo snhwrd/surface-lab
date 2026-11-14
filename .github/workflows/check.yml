@@ -33,3 +33,4 @@ jobs:
       - run: node tests/lattice.cjs
       - run: node tests/lattice-schedule.cjs
       - run: node tests/quizzes.cjs
+      - run: node tests/physical-layout.cjs
