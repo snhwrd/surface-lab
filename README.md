@@ -31,6 +31,7 @@ uv run ruff format --check .
 uv run ty check
 node --check web/app.js
 node --check web/lattice.js
+node --check web/notation.js
 node tests/lattice.cjs
 ```
 
@@ -55,3 +56,7 @@ The decoder in `web/lattice.js` uses row-by-row dynamic programming to find a mi
 Assessment compares each proposed correction with its known inserted component: a residual stabilizer preserves the logical state, while odd overlap with the conjugate logical operator indicates a logical failure. A zero syndrome can therefore mean either a harmless stabilizer or an undetected logical error. Overall correction succeeds only when both sectors succeed. With perfect checks, the model guarantees correction on at most `(d - 1) / 2` affected qubits, including mixed X/Z/Y errors. Larger patterns are assessed individually, not rejected by count alone. Measurement faults and repeated rounds are excluded.
 
 Decoder tests exhaust all 512 distance-3 patterns separately for X and Z against brute-force minimum weights. They independently check residual stabilizer membership, check commutation, single errors, logical strings, stabilizer patterns and seeded multi-error patterns at all supported distances, plus mixed Pauli patterns within the correction radius.
+
+## Stabilizer notation guide
+
+Open “Stabilizer notation” in the navigation, or link directly with `/#notation`. The guide introduces state kets, Pauli strings and phases, stabilizer generators and code spaces, syndrome bits, logical operators, code distance, and optional binary symplectic notation. Its two-qubit explorer compares a selected error with an XX or ZZ check using local Pauli commutation. Links from the stabilizer, lattice and decoding lessons connect the guide to the course; further reading cites IBM Quantum, Preskill, and Gottesman.
