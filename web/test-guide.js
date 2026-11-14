@@ -37,7 +37,7 @@ function renderTestGuide(root){
   }
   function draw(){
     root.querySelectorAll('[data-test-step]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.testStep===step)));
-    root.querySelector('#testguidestep').innerHTML=`<div class="eyebrow">STEP ${step+1} OF ${steps.length}</div><h3>${steps[step].title}</h3>${steps[step].body}`;
+    root.querySelector('#testguidestep').innerHTML=`<div class="eyebrow">STEP ${step+1} OF ${steps.length}</div><h3>${steps[step].title}</h3>${steps[step].body}${tutorialStepCircuitLinks(5,step)}`;
     root.querySelector('#testguideprev').disabled=step===0;root.querySelector('#testguidenext').disabled=step===steps.length-1;
     root.querySelectorAll('[data-review-decode]').forEach(b=>b.onclick=()=>{const stage=b.dataset.reviewDecode;openLesson(4);document.querySelector(`[data-decode-step="${stage}"]`).click();});
     if(step===4){root.querySelector('#estimatefailures').oninput=estimate;root.querySelector('#estimateshots').oninput=estimate;estimate();}

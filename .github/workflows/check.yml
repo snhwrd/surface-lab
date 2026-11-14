@@ -41,3 +41,5 @@ jobs:
       - run: node --check web/stim-worker.js
       - run: node tests/stim-wasm.cjs
       - run: node tests/pages-compat.cjs
+      - run: node --check web/tutorial-circuits.js
+      - run: node tests/tutorial-circuits.cjs

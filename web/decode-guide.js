@@ -29,7 +29,7 @@ function renderDecodeGuide(root){
   }
   function draw(){
     root.querySelectorAll('[data-decode-step]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.decodeStep===step)));
-    root.querySelector('#decodeguidestep').innerHTML=`<div class="eyebrow">STEP ${step+1} OF ${steps.length}</div><h3>${steps[step].title}</h3>${steps[step].body}`;
+    root.querySelector('#decodeguidestep').innerHTML=`<div class="eyebrow">STEP ${step+1} OF ${steps.length}</div><h3>${steps[step].title}</h3>${steps[step].body}${tutorialStepCircuitLinks(4,step)}`;
     root.querySelector('#decodeguideprev').disabled=step===0;root.querySelector('#decodeguidenext').disabled=step===steps.length-1;
     root.querySelectorAll('[data-review-circuit]').forEach(b=>b.onclick=()=>{const stage=b.dataset.reviewCircuit;openLesson(3);document.querySelector(`[data-circuit-step="${stage}"]`).click();});
     const comparison=root.querySelector('#decodecomparison');if(comparison){comparison.onchange=drawComparison;drawComparison();}

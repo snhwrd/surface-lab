@@ -110,3 +110,5 @@ Open “Circuit playground” or `#circuit-playground`. Edit Stim instructions, 
 The bundled engine is real Stim 1.16.0 compiled to WebAssembly with a JavaScript interface; Pyodide and a Python backend are unnecessary. Assets resolve relative to the site, so the playground also works on GitHub Pages. Limits and a Stop button bound execution. Results are raw measurements, not decoded detector events. See [WASM build instructions](wasm/README.md) for the pinned source, toolchain, and resource limits.
 
 After building, run `node tests/stim-wasm.cjs` and `node tests/pages-compat.cjs`.
+
+All tutorial Stim circuits have “Open in circuit playground” links beside the relevant steps and complete examples. Links load standalone Stim instructions, including both inserted-error cases, cumulative manual construction stages and the distance/noise sweep circuits. Circuit links can be bookmarked or shared and work under a GitHub Pages project subpath. The playground samples raw measurements; Python/PyMatching analysis stays in the downloaded scripts. Run `node tests/tutorial-circuits.cjs` to verify the linked circuits.
