@@ -35,6 +35,7 @@ node --check web/notation.js
 node --check web/surface-view.js
 node --check web/lattice-lesson.js
 node --check web/surface-check.js
+node --check web/circuit-guide.js
 node tests/lattice.cjs
 node tests/lattice-schedule.cjs
 ```
@@ -74,3 +75,7 @@ In “Lattice playground,” toggle “Show data and ancilla roles” to inspect
 Tutorial 3 builds the distance-3 patch in seven illustrated steps, with a selectable four-layer CNOT schedule. For this site’s orientation (screen y increases downward), X ancillas visit SE, NE, SW, NW; Z ancillas visit SE, SW, NE, NW. Missing boundary corners are skipped. Generator commutation, gate ordering, and syndrome-record ordering are treated separately. Schedule tests check physical-qubit conflicts and conjugate every ancilla measurement backwards through the complete circuit to verify its measured generator, including signs. They also check bulk hook-pair orientation. The lesson discusses initialization-dependent first results and repeated-round comparisons.
 
 The “Think in stabilizers” lesson also connects its two-data-qubit example to the actual AZ0 (Z1 Z2 Z4 Z5) and AX0 (X0 X1 X3 X4) bulk generators. Each has a highlighted patch, four-data-plus-ancilla circuit diagrams with and without an anticommuting error, and a standalone Stim download. The example prepares product states and measures an isolated check rather than encoding the full patch.
+
+## Guided circuit construction
+
+Tutorial 4 continues the exact patch mapping and four-layer schedule from Tutorial 3 in eight steps. It builds a noiseless round manually, preserves the data over repeated ancilla readouts, and checks raw measurement changes and final logical-Z parity. Review buttons open the corresponding earlier construction step. It then introduces a separate Stim-generated memory circuit with detector and observable annotations, explains the convention difference, and adds Clifford depolarization before handing off to decoding. Run `uv run python examples/construct_circuit.py` for the complete executable example; the same content is downloadable in the tutorial.
