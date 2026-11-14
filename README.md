@@ -50,9 +50,9 @@ CI checks and builds the site but does not deploy it. Publication is intentional
 
 Progress stays in this browser's localStorage. No accounts or analytics are used. Fonts load from Google Fonts, with system fallback fonts.
 
-## Environment limitation
+## Reproducible environment
 
-Initial dependency resolution was blocked by unavailable DNS access to PyPI, so no uv.lock is committed yet. Run `uv lock` once network access is available and commit the resulting lockfile; then use `uv sync --locked` in CI and development. Ruff, ty, and the Stim experiment still require execution in that environment.
+The committed `uv.lock` pins the dependencies used by development and CI. Run `uv sync --locked` to install them.
 
 ## Playground decoder
 

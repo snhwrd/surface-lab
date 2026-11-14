@@ -22,17 +22,17 @@ layers = [
 round_circuit = stim.Circuit()
 round_circuit.append("H", x_ancillas)
 for targets in layers:
-    round_circuit.append("TICK")
+    round_circuit.append("TICK", [])
     round_circuit.append("CX", targets)
 
-round_circuit.append("TICK")
+round_circuit.append("TICK", [])
 round_circuit.append("H", x_ancillas)
-round_circuit.append("TICK")
+round_circuit.append("TICK", [])
 round_circuit.append("MR", ancillas)  # Measure Z, then reset ancillas
 
 # Preserve data while repeating ancilla preparation/interactions/readout.
 circuit += round_circuit * rounds
-circuit.append("TICK")
+circuit.append("TICK", [])
 circuit.append("M", data)  # Final data readout, only after all rounds
 
 samples = circuit.compile_sampler(seed=42).sample(shots=shots)
