@@ -141,7 +141,11 @@ document.addEventListener('click',event=>{
 window.addEventListener('hashchange',followCircuitLink);
 followCircuitLink();
 
-function followFooterAndGalleryLink(){if(location.hash==='#resources')view('resources');if(location.hash==='#circuits')view('circuits');}
+function followFooterAndGalleryLink(){if(location.hash==='#resources')view('resources');if(location.hash==='#circuits'||location.hash.startsWith('#circuits/')){
+  if(document.querySelector('#otherpage').classList.contains('hidden')||!document.getElementById('circuitcontents'))view('circuits');
+  const key=location.hash.slice('#circuits/'.length),target=location.hash==='#circuits'?document.getElementById('circuitcontents'):document.getElementById('circuit-'+key);
+  if(target){target.scrollIntoView({block:'start'});if(target.hasAttribute('tabindex'))target.focus({preventScroll:true});}
+}}
 window.addEventListener('hashchange',followFooterAndGalleryLink);
 followFooterAndGalleryLink();
 
@@ -165,3 +169,5 @@ function followCircuitSourceLink(){
 document.addEventListener('click',event=>{const link=event.target.closest('[data-circuit-source]');if(!link)return;event.preventDefault();history.pushState(null,'',link.getAttribute('href'));followCircuitSourceLink();});
 window.addEventListener('hashchange',followCircuitSourceLink);
 followCircuitSourceLink();
+
+document.addEventListener('click',event=>{const link=event.target.closest('[data-gallery-jump]');if(!link)return;event.preventDefault();history.pushState(null,'',link.getAttribute('href'));followFooterAndGalleryLink();});
