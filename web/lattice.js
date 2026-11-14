@@ -1,4 +1,4 @@
-/* Rotated CSS patches and exact minimum-weight X decoding with perfect checks. */
+/* Rotated CSS patches and independent exact minimum-weight X/Z decoding with perfect checks. */
 const SurfaceCode = (() => {
   const cache = new Map();
   const parity = n => {let p=0; for (;n;n&=n-1) p^=1; return p;};
@@ -18,9 +18,20 @@ const SurfaceCode = (() => {
     const model={d,checks,signatures,groups,weights:Array.from({length:1<<d},(_,m)=>weight(m))};
     cache.set(d,model); return model;
   }
-  function syndrome(model,errors) {return model.checks.filter(c=>c.type==='Z').map(c=>c.q.reduce((p,q)=>p^Number(errors.has(q)),0));}
-  function logicalParity(d,errors) {let p=0;for(let y=0;y<d;y++)p^=Number(errors.has(y*d));return p;}
-  function decode(model,syndromeBits) {
+  function syndrome(model,errors,type='X') {return model.checks.filter(c=>c.type===(type==='X'?'Z':'X')).map(c=>c.q.reduce((p,q)=>p^Number(errors.has(q)),0));}
+  function logicalParity(d,errors,type='X') {let p=0;for(let i=0;i<d;i++)p^=Number(errors.has(type==='X'?i*d:i));return p;}
+  const rotate=(d,q)=>(q%d)*d+d-1-Math.floor(q/d);
+  const unrotate=(d,q)=>(d-1-q%d)*d+Math.floor(q/d);
+  function decode(model,syndromeBits,type='X') {
+    if(type==='Z'){
+      const key=q=>[...q].sort((a,b)=>a-b).join(',');
+      const x=model.checks.filter(c=>c.type==='X');
+      if(syndromeBits.length!==x.length || syndromeBits.some(v=>v!==0&&v!==1))throw new Error('Invalid syndrome.');
+      const rotated=new Map(x.map((c,i)=>[key(c.q.map(q=>rotate(model.d,q))),syndromeBits[i]]));
+      const bits=model.checks.filter(c=>c.type==='Z').map(c=>rotated.get(key(c.q)));
+      return new Set([...decode(model,bits)].map(q=>unrotate(model.d,q)));
+    }
+    if(type!=='X')throw new Error('Error type must be X or Z.');
     const {d,checks,signatures,groups,weights}=model, n=1<<d, inf=30000;
     const z=checks.filter(c=>c.type==='Z');
     if(syndromeBits.length!==z.length || syndromeBits.some(v=>v!==0&&v!==1)) throw new Error('Invalid syndrome.');
@@ -50,10 +61,10 @@ const SurfaceCode = (() => {
     for(let row=d-1;row>=0;row--){const m=state>>1;for(let x=0;x<d;x++)if((m>>x)&1)correction.add(row*d+x);state=back[row][state];}
     return correction;
   }
-  function assess(model,errors) {
-    const bits=syndrome(model,errors),correction=decode(model,bits),residual=new Set(errors);
+  function assess(model,errors,type='X') {
+    const bits=syndrome(model,errors,type),correction=decode(model,bits,type),residual=new Set(errors);
     correction.forEach(q=>residual.has(q)?residual.delete(q):residual.add(q));
-    return {syndrome:bits,correction,residual,detected:bits.some(Boolean),logicalFailure:logicalParity(model.d,residual)===1,guaranteed:errors.size<=(model.d-1)/2};
+    return {syndrome:bits,correction,residual,detected:bits.some(Boolean),logicalFailure:logicalParity(model.d,residual,type)===1,guaranteed:errors.size<=(model.d-1)/2};
   }
   return {patch,syndrome,decode,assess,logicalParity};
 })();

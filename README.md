@@ -12,7 +12,7 @@ uv run python scripts/build.py
 uv run python -m http.server 8000 --directory dist
 ```
 
-Open http://localhost:8000. The browser playground supports rotated-code distances 3, 5, 7, and 9 with static X errors and perfect check measurements. It reports the measured syndrome and the logical outcome of an exact minimum-weight X correction. Toggle the correction overlay or try single-error, beyond-limit-chain, logical-row, and stabilizer presets. Changing distance resets the pattern. The browser does not execute Python or use Stim/PyMatching for this model. Download lesson examples to run locally.
+Open http://localhost:8000. The browser playground supports rotated-code distances 3, 5, 7, and 9 with static X/Z errors and perfect check measurements. It reports the measured syndrome and the logical outcome of independent minimum-weight X and Z corrections. Toggle the correction overlay or try single-error, beyond-limit-chain, logical-row, and stabilizer presets. Switching the X/Z insertion tool preserves the pattern; placing both components on one qubit gives Y up to global phase. Changing distance resets both components. The browser does not execute Python or use Stim/PyMatching for this model. Download lesson examples to run locally.
 
 ## Python experiment
 
@@ -50,6 +50,8 @@ Initial dependency resolution was blocked by unavailable DNS access to PyPI, so 
 
 ## Playground decoder
 
-The decoder in `web/lattice.js` uses row-by-row dynamic programming to find a minimum-weight X pattern consistent with the Z-check syndrome. It receives only the syndrome. Assessment compares the proposed correction with the known inserted pattern: a residual X stabilizer preserves the logical state, while odd overlap with a vertical logical Z indicates a logical X failure. A zero syndrome can therefore mean either a harmless stabilizer or an undetected logical error. This ideal model guarantees correction of any pattern of at most `(d - 1) / 2` X errors; larger patterns are assessed individually, not rejected by count alone. It excludes phase errors, measurement faults and repeated rounds.
+The decoder in `web/lattice.js` uses row-by-row dynamic programming to find a minimum-weight X pattern consistent with the Z-check syndrome. The Z decoder rotates the patch to reuse that algorithm with the X-check syndrome. Both decoders receive only their syndrome, and treat X and Z components independently rather than using their correlations.
 
-Decoder tests exhaust all 512 distance-3 patterns against brute-force minimum weights and independently check residual stabilizer membership, check commutation, single errors, logical rows, stabilizer patterns and seeded multi-error patterns at all supported distances.
+Assessment compares each proposed correction with its known inserted component: a residual stabilizer preserves the logical state, while odd overlap with the conjugate logical operator indicates a logical failure. A zero syndrome can therefore mean either a harmless stabilizer or an undetected logical error. Overall correction succeeds only when both sectors succeed. With perfect checks, the model guarantees correction on at most `(d - 1) / 2` affected qubits, including mixed X/Z/Y errors. Larger patterns are assessed individually, not rejected by count alone. Measurement faults and repeated rounds are excluded.
+
+Decoder tests exhaust all 512 distance-3 patterns separately for X and Z against brute-force minimum weights. They independently check residual stabilizer membership, check commutation, single errors, logical strings, stabilizer patterns and seeded multi-error patterns at all supported distances, plus mixed Pauli patterns within the correction radius.
