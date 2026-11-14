@@ -32,6 +32,7 @@ uv run ty check
 node --check web/app.js
 node --check web/lattice.js
 node --check web/notation.js
+node --check web/surface-view.js
 node tests/lattice.cjs
 ```
 
@@ -60,3 +61,7 @@ Decoder tests exhaust all 512 distance-3 patterns separately for X and Z against
 ## Stabilizer notation guide
 
 Open “Stabilizer notation” in the navigation, or link directly with `/#notation`. The guide introduces state kets, Pauli strings and phases, stabilizer generators and code spaces, syndrome bits, logical operators, code distance, and optional binary symplectic notation. Its two-qubit explorer compares a selected error with an XX or ZZ check using local Pauli commutation. Links from the stabilizer, lattice and decoding lessons connect the guide to the course; further reading cites IBM Quantum, Preskill, and Gottesman.
+
+## Physical-qubit view
+
+Open “Physical qubits” or use `/#surface-code` to inspect distances 3, 5, 7, and 9. Data qubits are labeled D0, D1, …; dedicated X- and Z-check ancillas are labeled AX0, … and AZ0, …. Selecting an ancilla highlights its support and CNOT control-to-target arrows, with preparation and measurement instructions. Selecting data lists its neighboring checks and its role in each. The physical-qubit count is `2*d*d - 1`, assuming one dedicated ancilla per generator. The diagram explains connectivity and does not prescribe a fault-tolerant gate schedule.

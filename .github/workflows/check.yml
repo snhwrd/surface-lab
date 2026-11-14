@@ -20,4 +20,5 @@ jobs:
       - run: node --check web/app.js
       - run: node --check web/lattice.js
       - run: node --check web/notation.js
+      - run: node --check web/surface-view.js
       - run: node tests/lattice.cjs
