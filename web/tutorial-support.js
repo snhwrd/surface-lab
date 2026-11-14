@@ -1,0 +1,39 @@
+const tutorialStepCounts=[7,7,7,8,8,8,9];
+function savedTutorialStep(lesson){
+  const step=state.steps?.[lesson];
+  return Number.isInteger(step)&&step>=0&&step<tutorialStepCounts[lesson]?step:0;
+}
+function rememberTutorialStep(lesson,step){
+  state.steps??={};state.steps[lesson]=step;save();
+  history.replaceState(null,'',`#tutorial/${lesson+1}/${step+1}`);
+}
+function tutorialReturnLink(){
+  const container=document.getElementById('tutorialreturn');
+  if(!container)return;
+  const lesson=state.last,step=savedTutorialStep(lesson);
+  container.innerHTML=Object.hasOwn(state.steps||{},lesson)?`<a class="outline" href="#tutorial/${lesson+1}/${step+1}" data-return-tutorial>← Return to tutorial ${lesson+1}, step ${step+1}: ${escapeHTML(lessons[lesson].title)}</a>`:'';
+}
+function pythonHelp(lesson,step){
+  const notes={
+    '0/4':'<p><code>samples</code> is a NumPy array supplied by Stim. Its first dimension counts shots; its second counts recorded measurements. <code>samples.shape</code> is a tuple of these lengths. <code>astype(int)</code> makes a printable integer copy: False becomes 0 and True becomes 1. It does not change the original array.</p>',
+    '0/5':'<p>In <code>samples[:, 0]</code>, the colon selects every row and 0 selects the first column. Boolean True counts as 1 when summed. <code>samples[:3]</code> selects up to three rows, stopping before position 3. <code>enumerate</code> gives each row with its zero-based position; the two names in <code>for shot_index, row</code> unpack that pair.</p>',
+    '1/2':'<p><code>(False, True)</code> is a two-item tuple. The loop runs once with each value. <code>if insert_x:</code> adds X only in the True case. <code>[0, 2, 1, 2]</code> is a flat list of two control–target pairs. Sampling one shot gives a two-dimensional array; <code>[0, 0]</code> selects its first row and first measurement. In an f-string, <code>{1 - 2 * bit:+d}</code> prints a signed integer, +1 or −1.</p>',
+    '2/0':'<p>The download uses <code>[(x, y) for y in range(distance) for x in range(distance)]</code>. This list comprehension means: visit each row y, then each column x, and store the coordinate tuple (x, y). For distance 3 the first entries are (0, 0), (1, 0), (2, 0), then (0, 1). <code>range(3)</code> produces 0, 1, 2.</p>',
+    '2/1':'<p>The <code>checks</code> dictionary maps a name to a tuple containing its type and support: <code>checks["AX0"]</code> is <code>("X", [0, 1, 3, 4])</code>. In <code>for name, (kind, support) in checks.items()</code>, unpacking names the key, then the two pieces of its value. <code>len(support)</code> counts the data qubits touched by that check.</p>',
+    '2/3':'<p><code>set(support_a) &amp; set(support_b)</code> finds the shared data indices. <code>len(...)</code> counts them; <code>% 2</code> gives the remainder after division by two. An assertion that this remainder equals 0 checks even overlap. This verifies commutation for opposite-type checks here; counting logical qubits as n minus the number of generators also requires their independence, which this particular patch has.</p>',
+    '3/1':'<p><code>list(range(9))</code> makes [0, 1, …, 8]. Adding Python lists concatenates them: <code>data + ancillas</code> lists every data index followed by every ancilla index. The ancilla order determines measurement-column order, even though the X ancillas are not a contiguous group in that list.</p>',
+    '3/3':'<p><code>layers</code> is a list of four lists. <code>for targets in layers</code> visits one complete layer at a time. Each inner list alternates control and target indices. This loop appends gates to a circuit description; it does not sample a shot or reset the data.</p>',
+    '3/5':'<p><code>samples[:, :8 * rounds]</code> keeps all shots and the first 24 measurement columns. <code>reshape(shots, rounds, 8)</code> groups them into shot, round, check order without rearranging measurements: original column 8r + c becomes round r, check c.</p><p><code>check_bits[:, 1:, :]</code> selects rounds 2 and 3; <code>check_bits[:, :-1, :]</code> selects rounds 1 and 2. On Boolean arrays, <code>^</code> computes pairwise XOR, so the result compares 2 versus 1 and 3 versus 2 for each shot and check. <code>changes.any()</code> asks whether any comparison is True.</p><p><code>final_data[:, [0, 3, 6]]</code> selects three logical-Z columns per shot. <code>sum(axis=1)</code> sums across those columns, leaving one total per shot. <code>% 2</code> reduces each total to parity. Summing on axis 0 instead would mix independent shots.</p>',
+    '4/3':'<p><code>dets.shape</code> gives (shots, detectors); <code>actual.shape</code> gives (shots, observables). <code>separate_observables=True</code> returns a pair of arrays. Writing <code>dets, actual = ...</code> unpacks that pair. Both arrays describe the same shots in the same row order.</p>',
+    '4/6':'<p><code>predicted != actual</code> compares corresponding entries and produces a Boolean array, one column per observable. <code>np.any(mismatch, axis=1)</code> combines columns within each shot: [False, True] becomes True because that shot missed one observable. With one observable, each row already has one Boolean. <code>np.count_nonzero(failed)</code> counts failed shots, not detector events. Using axis 0 would combine different shots and give the wrong denominator.</p><p><code>np.flatnonzero(dets[i]).tolist()</code> finds the positions of fired detectors in shot i and converts them into an ordinary Python list for printing.</p>',
+    '5/1':'<p>The optional configuration block uses <code>argparse</code> to read terminal options. <code>--shots 1000</code> becomes the integer <code>args.shots</code>; omitting it uses the default. <code>type=int</code> rejects non-integer text. <code>parser.error</code> stops invalid configurations with a message. No quantum simulation happens in this block.</p>',
+    '5/2':'<p><code>def experiment(...):</code> defines a reusable function. Parameters name its inputs; <code>return int(...)</code> supplies one failure count to the caller. Type annotations such as <code>shots: int</code> document expected types; they do not themselves validate inputs. <code>axis=1</code> combines observable columns within each shot, so the returned count measures failed complete experiments.</p>',
+    '5/5':'<p>The outer loop selects a noise rate; the inner loop tries both distances at that rate. A dictionary such as <code>{"distance": distance, "failures": failures}</code> names the fields in one result row. <code>results.append(...)</code> adds that row to a list. Incrementing <code>case_index</code> gives each case a distinct seed.</p>',
+    '6/4':'<p>The function returns a list of Task objects. json_metadata is a dictionary; the nested versions dictionary is also JSON-compatible. A list comprehension such as [stat for stat in stats if ...] retains only results satisfying the condition.</p>',
+    '6/8':'<p>Python sets __name__ to __main__ when running a file directly. Imported worker processes see its module name instead. The guard runs the parent entry point while leaving the function definitions available to imported workers.</p>',
+    '5/6':'<p><code>with open(..., "w", ...)</code> opens a new output file and closes it when the block ends. Mode w replaces an existing file at that path. <code>csv.DictWriter</code> uses dictionary keys as column names; <code>writeheader()</code> writes the names, and <code>writerows(results)</code> writes one result per row. This file-handling code exports already computed results.</p>'
+  };
+  const note=notes[`${lesson}/${step}`];
+  return note?`<details class="pythonhelp"><summary>Python used here</summary>${note}</details>`:'';
+}
+if(typeof module!=='undefined')module.exports={savedTutorialStep,rememberTutorialStep,pythonHelp,tutorialStepCounts};

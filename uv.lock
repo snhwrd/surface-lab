@@ -636,6 +636,18 @@ wheels = [
 ]
 
 [[package]]
+name = "sinter"
+version = "1.16.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "matplotlib" },
+    { name = "numpy" },
+    { name = "scipy" },
+    { name = "stim" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/cd/6b/b546cc9240fb1b64417c8ca00038ce1927ffd6e8a0d4e46ad237242dbcd8/sinter-1.16.0.tar.gz", hash = "sha256:fd0f7bff97cb951345893f53b347d76f99b53977590054abc3d057150f82037b", size = 177330, upload-time = "2026-05-22T05:41:49.762Z" }
+
+[[package]]
 name = "stim"
 version = "1.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -665,6 +677,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "numpy" },
     { name = "pymatching" },
+    { name = "sinter" },
     { name = "stim" },
 ]
 
@@ -678,6 +691,7 @@ dev = [
 requires-dist = [
     { name = "numpy", specifier = ">=2.2" },
     { name = "pymatching", specifier = ">=2.3" },
+    { name = "sinter", specifier = ">=1.16" },
     { name = "stim", specifier = ">=1.15" },
 ]
 

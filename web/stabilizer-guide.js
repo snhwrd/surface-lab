@@ -1,0 +1,26 @@
+function renderStabilizerGuide(root){
+  const steps=[
+    {title:'Read a stabilizer check',body:'<p>A check is a joint Pauli operator on the data. For two qubits, Z₀Z₁ measures whether their Z-basis values agree. Its +1 eigenspace contains |00⟩ and |11⟩; its −1 eigenspace contains |01⟩ and |10⟩.</p><div class="equation">g|ψ⟩ = |ψ⟩ means g stabilizes |ψ⟩<br>g = Z₀Z₁ &nbsp; → &nbsp; measure joint Z parity</div><p>A stabilizer code is defined by a set of independent commuting checks with specified +1 signs. A single parity check is a starting example, not a full surface code.</p><p>We use a third qubit, the ancilla, to gather the parity. The data hold the state; only the ancilla is measured. In these circuits the recorded bit b gives the check value (−1)ᵇ: 0 means +1, and 1 means −1.</p>'},
+    {title:'Compare Z parity with and without an error',body:'<p>Reset q0, q1 and ancilla q2 to |0⟩. Each data qubit controls a CNOT into q2, so two data values contribute by XOR. Compare the same circuit without an error and with X on q0.</p>'+stabilizerComparison()+'<p>X and Z anticommute: XZ = −ZX on the same qubit. That minus sign explains why one X error changes this Z-check sign. A Z error commutes with this check and is not detected by it.</p>'},
+    {title:'Run the two-data Python comparison',body:'<p>Use your existing Python workspace from Tutorial 1, where Stim is installed. Download tutorial_2.py below and run it there:</p><pre>uv run python tutorial_2.py</pre><p>The script loops over two cases. It resets the data and ancilla for each case, conditionally inserts X, applies the two CNOTs, then reads only the ancilla.</p><pre>'+escapeHTML(lessons[1].code)+'</pre><p>Expected: without X, ancilla 0 and parity +1; with X, ancilla 1 and parity −1. Both outcomes are deterministic here because we prepared product states with definite parity.</p>'},
+    {title:'Use an X check to detect a phase flip',body:'<section id="twodataxcheck"><p>A Z check detects an X component. To detect a Z component, measure X₀X₁ instead. Prepare the data and ancilla in |+⟩ using H, use the ancilla as CNOT control, then apply H to the ancilla before its Z measurement.</p>'+circuitFigure(2)+tutorialCircuitLinks(['x-parity'])+'<p>The inserted Z on q0 changes |+⟩ to |−⟩ and flips the X-check sign. Remove it and the ancilla reads 0. With it, the ancilla reads 1. CNOT directions and the H gates are essential.</p><p>X and Z on the same physical qubit combine to Y up to global phase. That error can affect both check types, but its Pauli weight is still one: weight counts affected qubits.</p></section>'},
+    {title:'See why parity preserves logical information',body:coherentParityLesson()},
+    {title:'Extend to a four-data surface-code check',body:'<section id="surfacechecklesson" class="surfacechecklesson"></section>'},
+    {title:'Connect the checks to a full patch',body:'<p>You have measured two-data parity, detected bit and phase components with complementary checks, and seen why joint parity can preserve coherence inside an eigenspace. A bulk surface-code check extends the same idea to four data qubits and one ancilla.</p><p>One check cannot identify every error. A full patch combines commuting X and Z generators, including boundary checks, to encode a logical qubit. The next tutorial builds that geometry and coordinates all of the ancilla interactions.</p><div class="notice">Remember: a recorded 1 means a −1 check value. Whether it signals a new error depends on the known baseline. The later memory experiment explains why some first-round results can be random without noise.</div><button class="primary" id="stabilizernextlesson">Open Build the 2D lattice →</button><p>Use the five-question quiz below to mark this tutorial complete.</p>'}
+  ];
+  let step=savedTutorialStep(1);
+  root.innerHTML='<div class="constructionnav" role="group" aria-label="Stabilizer and parity steps">'+steps.map((s,i)=>`<button class="outline" data-stabilizer-step="${i}">${i+1}. ${s.title}</button>`).join('')+'</div><section id="stabilizerguidestep"></section><div class="controls constructionfooter"><button class="outline" id="stabilizerguideprev">← Previous step</button><button class="primary" id="stabilizerguidenext">Next step →</button></div>';
+  function draw(){
+    rememberTutorialStep(1,step);
+    root.querySelectorAll('[data-stabilizer-step]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.stabilizerStep===step)));
+    root.querySelector('#stabilizerguidestep').innerHTML=`<div class="eyebrow">STEP ${step+1} OF ${steps.length}</div><h3>${steps[step].title}</h3>${steps[step].body}${pythonHelp(1,step)}`;
+    root.querySelector('#stabilizerguideprev').disabled=step===0;
+    root.querySelector('#stabilizerguidenext').disabled=step===steps.length-1;
+    if(step===5)renderSurfaceCheck(root.querySelector('#surfacechecklesson'));
+    const next=root.querySelector('#stabilizernextlesson');if(next)next.onclick=()=>openLesson(2);
+  }
+  root.querySelectorAll('[data-stabilizer-step]').forEach(b=>b.onclick=()=>{step=+b.dataset.stabilizerStep;draw();});
+  root.querySelector('#stabilizerguideprev').onclick=()=>{step=Math.max(0,step-1);draw();};
+  root.querySelector('#stabilizerguidenext').onclick=()=>{step=Math.min(steps.length-1,step+1);draw();};
+  draw();
+}

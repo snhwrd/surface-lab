@@ -47,6 +47,51 @@ print("Final logical Z bits:", logical_z.astype(int))
 assert not changes.any()
 assert not logical_z.any()
 
+# Annotate three representative AZ0 relations on the same manual patch.
+# This teaching subset is not a complete decoding detector set.
+manual_annotated = stim.Circuit()
+manual_annotated.append("R", data + ancillas)
+manual_annotated += round_circuit
+# AZ0 is position 1 in the eight-bit record; its initial sign is +1.
+manual_annotated.append("DETECTOR", [stim.target_rec(-7)])
+manual_annotated += round_circuit
+# Compare AZ0 in round 2 with AZ0 in round 1.
+manual_annotated.append("DETECTOR", [stim.target_rec(-7), stim.target_rec(-15)])
+manual_annotated += round_circuit
+manual_annotated.append("M", data)
+# Compare final Z1 Z2 Z4 Z5 parity with the last AZ0 reading.
+manual_annotated.append(
+    "DETECTOR",
+    [
+        stim.target_rec(-16),
+        stim.target_rec(-8),
+        stim.target_rec(-7),
+        stim.target_rec(-5),
+        stim.target_rec(-4),
+    ],
+)
+# Observable 0 is the final vertical logical-Z parity on D0, D3, D6.
+manual_annotated.append(
+    "OBSERVABLE_INCLUDE",
+    [
+        stim.target_rec(-9),
+        stim.target_rec(-6),
+        stim.target_rec(-3),
+    ],
+    0,
+)
+bridge_dets, bridge_flips = manual_annotated.compile_detector_sampler(seed=42).sample(
+    shots=shots,
+    separate_observables=True,
+)
+assert bridge_dets.shape == (shots, 3)
+assert bridge_flips.shape == (shots, 1)
+assert not bridge_dets.any()
+assert not bridge_flips.any()
+# Also verify that the declared parities are deterministic without noise.
+manual_annotated.detector_error_model()
+print("Manual annotation subset:", bridge_dets.shape, bridge_flips.shape)
+
 # A separate generated memory experiment, using Stim's labeling convention.
 annotated = stim.Circuit.generated(
     "surface_code:rotated_memory_z",

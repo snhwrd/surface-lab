@@ -12,6 +12,9 @@ function tutorialCircuits(){
     }
   }
   add('x-parity','Two-data X parity: with Z error','R 0 1 2\nH 0 1 2\nZ 0\nCX 2 0 2 1\nH 2\nM 2\n');
+  const bellParity='R 0 1 2\nH 0\nCX 0 1\nCX 0 2 1 2\nM 2\n';
+  add('coherence-parity','Bell pair: parity preserves coherence',bellParity+'CX 0 1\nH 0\nM 0 1\n');
+  add('coherence-read-data','Bell pair: individual data readout loses coherence',bellParity+'M 0 1\nCX 0 1\nH 0\nM 0 1\n');
   const {checks,layers}=latticeRoundSchedule(3),xs=checks.filter(c=>c.type==='X').map(c=>c.ancilla).join(' '),ancillas=checks.map(c=>c.ancilla).join(' ');
   const init='R '+Array.from({length:17},(_,i)=>i).join(' ')+'\n';
   const interactions='H '+xs+'\n'+layers.map(g=>'TICK\nCX '+g.flatMap(op=>[op.control,op.target]).join(' ')+'\n').join('');
@@ -25,10 +28,10 @@ function tutorialCircuitLinks(keys){
   return '<div class="tutorialcircuitlinks"><p class="tiny">Open in circuit playground:</p><div class="controls">'+keys.map(key=>`<a class="outline" href="#circuit-playground/${encodeURIComponent(key)}" data-tutorial-circuit="${key}">${circuits[key].name} →</a>`).join('')+'</div><p class="tiny">Loads the equivalent Stim instructions. Run samples raw measurement records; Python analysis and PyMatching decoding remain in the tutorial script.</p></div>';
 }
 function lessonCircuitKeys(lesson){
-  return [ ['first','zero','one'],['parity-0','parity-1','bulk-Z-0','bulk-Z-1','bulk-X-0','bulk-X-1'],['round'],['initialize','interactions','round','manual','memory-3-0','memory-3-0.005'],['memory-3-0','memory-3-0.005'],[3,5].flatMap(d=>[0,0.001,0.005,0.01].map(p=>`memory-${d}-${p}`)) ][lesson];
+  return [ ['first','zero','one'],['parity-0','parity-1','bulk-Z-0','bulk-Z-1','bulk-X-0','bulk-X-1','coherence-parity','coherence-read-data'],['round'],['initialize','interactions','round','manual','memory-3-0','memory-3-0.005'],['memory-3-0','memory-3-0.005'],[3,5].flatMap(d=>[0,0.001,0.005,0.01].map(p=>`memory-${d}-${p}`)) ,[3,5].flatMap(d=>[0.001,0.005,0.01].map(p=>`memory-${d}-${p}`)) ][lesson];
 }
 function tutorialStepCircuitKeys(lesson,step){
-  const keys={0:{2:['reset'],3:['hadamard'],4:['first'],5:['first'],6:['zero','one']},3:{2:['initialize'],3:['interactions'],4:['round'],5:['manual'],6:['memory-3-0'],7:['memory-3-0.005']},4:{1:['memory-3-0'],2:['memory-3-0.005'],3:['memory-3-0.005'],4:['memory-3-0.005'],5:['memory-3-0.005'],6:['memory-3-0.005'],7:['memory-3-0.005']},5:{2:lessonCircuitKeys(5).filter(k=>!k.endsWith('-0')),3:['memory-3-0','memory-5-0'],5:lessonCircuitKeys(5).filter(k=>!k.endsWith('-0'))}}[lesson]?.[step];
+  const keys={6:{1:['memory-3-0.005'],3:['memory-3-0','memory-5-0'],4:lessonCircuitKeys(6),6:lessonCircuitKeys(6)},0:{2:['reset'],3:['hadamard'],4:['first'],5:['first'],6:['zero','one']},3:{2:['initialize'],3:['interactions'],4:['round'],5:['manual'],6:['memory-3-0'],7:['memory-3-0.005']},4:{1:['memory-3-0'],2:['memory-3-0.005'],3:['memory-3-0.005'],4:['memory-3-0.005'],5:['memory-3-0.005'],6:['memory-3-0.005'],7:['memory-3-0.005']},5:{2:lessonCircuitKeys(5).filter(k=>!k.endsWith('-0')),3:['memory-3-0','memory-5-0'],5:lessonCircuitKeys(5).filter(k=>!k.endsWith('-0'))}}[lesson]?.[step];
   return keys||[];
 }
 function tutorialStepCircuitLinks(lesson,step){
@@ -39,12 +42,13 @@ if(typeof module!=='undefined')module.exports={tutorialCircuits,lessonCircuitKey
 function tutorialCircuitSources(key){
   if(!Object.hasOwn(tutorialCircuits(),key))return [];
   const sources=[];
-  for(const lesson of [0,3,4,5])for(let step=0;step<8;step++)if(tutorialStepCircuitKeys(lesson,step).includes(key))sources.push({lesson,step});
-  if(key.startsWith('parity-')||key.startsWith('bulk-')||key==='x-parity')sources.push({lesson:1,focus:key});
+  for(const lesson of [0,3,4,5,6])for(let step=0;step<9;step++)if(tutorialStepCircuitKeys(lesson,step).includes(key))sources.push({lesson,step});
+  if(key.startsWith('parity-')||key.startsWith('bulk-')||key==='x-parity')sources.push({lesson:1,step:key.startsWith('bulk-')?5:key==='x-parity'?3:1});
+  if(key.startsWith('coherence-'))sources.push({lesson:1,step:4});
   if(key==='round')sources.push({lesson:2,step:5});
   return sources;
 }
 function tutorialCircuitSourceLinks(key){
-  const names=['Python meets quantum','Think in stabilizers','Build the 2D lattice','Construct a circuit','Detect & decode errors','Test your surface code'];
+  const names=['Python meets quantum','Think in stabilizers','Build the 2D lattice','Construct a circuit','Detect & decode errors','Test your surface code','Scale experiments with Sinter'];
   return '<div class="tutorialsources"><p class="tiny">Find this circuit in the tutorial:</p><div class="controls">'+tutorialCircuitSources(key).map((source,i)=>`<a class="outline" href="#tutorial-circuit/${key}/${i}" data-circuit-source>${names[source.lesson]}${source.step===undefined?' · '+(key.startsWith('bulk-')?'four-data check':key==='x-parity'?'X parity example':key.endsWith('0')?'without error':'with error'):' · step '+(source.step+1)} →</a>`).join('')+'</div></div>';
 }

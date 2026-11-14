@@ -17,11 +17,12 @@ function renderPythonGuide(root){
     {title:'Count outcomes and read a Python loop',body:'<p><code>samples[:, 0]</code> selects the first measurement column across all shots. Summing its Boolean values counts the 1 outcomes; subtracting from the shot count gives the 0 count. <code>enumerate</code> lets a loop visit rows with their position.</p>'+code(e.count)+'<p>Ten samples need not contain exactly five 0s and five 1s. Probabilities describe the distribution over repeated experiments; finite samples fluctuate. Try changing <code>shots</code> to 100 or 1000. Larger samples usually estimate the probability more closely, without guaranteeing exact balance.</p>'},
     {title:'Run the complete script and compare simple circuits',body:'<p>Run the downloaded file in the project folder:</p><pre>uv run python tutorial_1.py</pre><p>Expected: the first qubit prints as 0, the sample shape is (10, 1), and the outcome counts sum to ten. The exact H-then-M sequence is random. Compare it with these noiseless circuits:</p>'+code(e.compare)+'<p>R then M always records 0. R then X then M always records 1. Only the H example has equally likely Z outcomes. The complete download includes all three comparisons and sanity assertions.</p><button class="primary" id="pythonnextlesson">Open Think in stabilizers →</button><p>Next you will use more than one qubit and an ancilla to measure parity. Finish the five-question quiz below to mark this tutorial complete.</p>'}
   ];
-  let step=0;
+  let step=savedTutorialStep(0);
   root.innerHTML='<div class="constructionnav" role="group" aria-label="Python and first-qubit steps">'+steps.map((s,i)=>`<button class="outline" data-python-step="${i}">${i+1}. ${s.title}</button>`).join('')+'</div><section id="pythonguidestep"></section><div class="controls constructionfooter"><button class="outline" id="pythonguideprev">← Previous step</button><button class="primary" id="pythonguidenext">Next step →</button></div>';
   function draw(){
+    rememberTutorialStep(0,step);
     root.querySelectorAll('[data-python-step]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.pythonStep===step)));
-    root.querySelector('#pythonguidestep').innerHTML=`<div class="eyebrow">STEP ${step+1} OF ${steps.length}</div><h3>${steps[step].title}</h3>${steps[step].body}${tutorialStepCircuitLinks(0,step)}`;
+    root.querySelector('#pythonguidestep').innerHTML=`<div class="eyebrow">STEP ${step+1} OF ${steps.length}</div><h3>${steps[step].title}</h3>${steps[step].body}${pythonHelp(0,step)}${tutorialStepCircuitLinks(0,step)}`;
     root.querySelector('#pythonguideprev').disabled=step===0;root.querySelector('#pythonguidenext').disabled=step===steps.length-1;
     const next=root.querySelector('#pythonnextlesson');if(next)next.onclick=()=>openLesson(1);
   }

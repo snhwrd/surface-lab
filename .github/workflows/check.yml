@@ -31,9 +31,14 @@ jobs:
       - run: node --check web/decode-guide.js
       - run: node --check web/python-guide.js
       - run: node --check web/quizzes.js
+      - run: node --check web/sinter-guide.js
+      - run: node tests/sinter-example.cjs
       - run: node --check web/test-guide.js
       - run: node tests/lattice.cjs
       - run: node tests/lattice-schedule.cjs
+      - run: node --check web/tutorial-support.js
+      - run: node --check web/stabilizer-guide.js
+      - run: node tests/tutorial-navigation.cjs
       - run: node tests/quizzes.cjs
       - run: node tests/physical-layout.cjs
       - run: node tests/test-guide.cjs

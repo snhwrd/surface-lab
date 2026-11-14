@@ -1,6 +1,6 @@
 # Surface Lab
 
-An interactive six-lesson introduction to Python, stabilizers, the rotated 2D surface code, Stim circuits, and PyMatching decoding. Includes a keyboard-accessible parity playground, conceptual checkpoints, and browser-local progress.
+An interactive seven-lesson introduction to Python, stabilizers, the rotated 2D surface code, Stim circuits, and PyMatching decoding. Includes a keyboard-accessible parity playground, conceptual checkpoints, and browser-local progress.
 
 ## Develop
 
@@ -85,7 +85,7 @@ The “Think in stabilizers” lesson also connects its two-data-qubit example t
 
 ## Guided circuit construction
 
-Tutorial 4 continues the exact patch mapping and four-layer schedule from Tutorial 3 in eight steps. It builds a noiseless round manually, preserves the data over repeated ancilla readouts, and checks raw measurement changes and final logical-Z parity. Review buttons open the corresponding earlier construction step. It then introduces a separate Stim-generated memory circuit with detector and observable annotations, explains the convention difference, and adds Clifford depolarization before handing off to decoding. Run `uv run python examples/construct_circuit.py` for the complete executable example; the same content is downloadable in the tutorial.
+Tutorial 4 continues the exact patch mapping and four-layer schedule from Tutorial 3 in eight steps. It builds a noiseless round manually, preserves the data over repeated ancilla readouts, and checks raw measurement changes and final logical-Z parity. Review buttons open the corresponding earlier construction step. A worked annotation bridge labels the eight record positions and adds one preparation-boundary detector, one adjacent-round detector, one final-readout detector, and the logical-Z observable to the manual patch. This three-detector teaching subset is explicitly distinguished from a complete decoding experiment. It then introduces a separate Stim-generated memory circuit with detector and observable annotations, explains the convention difference, and adds Clifford depolarization before handing off to decoding. Run `uv run python examples/construct_circuit.py` for the complete executable example; the same content is downloadable in the tutorial.
 
 ## Guided detection and decoding
 
@@ -95,7 +95,7 @@ Tutorial 5 traces the annotated generated memory circuit through a noiseless bas
 
 “Python meets quantum” is a seven-step introduction to workspace setup, variables and lists, Stim circuit preparation, H and Z-basis measurement, shot arrays, counting, and deterministic comparison circuits. Run `uv run python examples/python_meets_quantum.py` for the complete example.
 
-All six tutorials end with five-question quizzes (30 questions total), per-question explanations and retryable checking. A newly completed tutorial requires five correct answers checked together. Choices and checked results are saved in the existing browser-local progress record. Older completion marks are preserved; returning readers can review the new quizzes without losing completed tutorials. Changing an answer requires checking again. Reset progress clears both completion marks and quiz answers.
+All seven tutorials end with five-question quizzes (35 questions total), per-question explanations and retryable checking. A newly completed tutorial requires five correct answers checked together. Choices and checked results are saved in the existing browser-local progress record. Older completion marks are preserved; returning readers can review the new quizzes without losing completed tutorials. Changing an answer requires checking again. Reset progress clears both completion marks and quiz answers.
 
 In the playground’s physical-qubit overlay, “Align links N/S/E/W” rotates the diagram 45 degrees so all data–ancilla connections are horizontal or vertical. “Return to original grid” reverses it. Text stays upright; the selected check, distance and inserted errors are preserved. A compass marks screen directions in the cardinal view. This is a display rotation, not a change to the logical code or gate schedule.
 
@@ -116,3 +116,19 @@ All tutorial Stim circuits have “Open in circuit playground” links beside th
 Resources is available from the shared footer on every view. Circuit diagrams uses the same catalog as the tutorial playground links, showing every circuit with its native Stim diagram, source instructions, `.stim` download, and playground link.
 
 Each circuit card also links back to the tutorial steps that use it. These links select the relevant step or check type and scroll to the example. Imported circuits in the playground include the same tutorial links.
+
+## Tutorial navigation and Python help
+
+All seven guides save their current step in browser-local progress. Step URLs use `#tutorial/4/6` (tutorial 4, step 6); opening an explicit step overrides the saved position. Reference views and playgrounds provide a return link to the last tutorial step. Reset progress clears saved positions along with quiz answers and completion marks. Optional “Python used here” explanations cover collections, array shape and axes, Boolean XOR, functions and result exports at their point of use.
+
+## Collect experiments with Sinter
+
+Tutorial 7 adds a nine-step introduction to Sinter with a workflow diagram tracing the six worked tasks through Stim, PyMatching, evaluation, and resumable statistics. Open `#tutorial/7/1`. The budget exercise is illustrative; collection runs locally.
+
+```sh
+uv run python examples/collect_with_sinter.py --workers 2 --max-shots 10000 --max-errors 100 --output sinter_results.csv
+# Resume the same tasks with larger cumulative limits:
+uv run python examples/collect_with_sinter.py --max-shots 100000 --max-errors 1000 --output sinter_results.csv --plot sinter_rates.png
+```
+
+The script checks noiseless circuits first, holds rounds fixed (default 3), records software versions, and reports only the current six task identities from its resume history. CSV statistics accumulate across runs; either budget can stop each task. Optional plots use Sinter likelihood-ratio shading, not nominal 95% Wilson intervals. Existing tutorial completions are preserved when the seventh lesson is added.

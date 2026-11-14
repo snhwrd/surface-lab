@@ -40,13 +40,24 @@ const tutorialQuizzes=[
     {q:'What information is needed for a useful distance comparison?',answers:['A consistent noise definition, stated round counts, shot counts and uncertainty','Only the distance labels','Only the faster runtime'],correct:0,explain:'Distance alone is insufficient. Changes in rounds, noise assumptions or sampling can alter the observed rates.'},
     {q:'Does a larger distance guarantee a lower measured failure rate in every small experiment?',answers:['Yes, regardless of noise or sampling','No; the noise regime and finite-sample uncertainty matter','Yes, provided there is at least one detector event'],correct:1,explain:'Larger distance can suppress logical errors below threshold, but not in every regime or every finite sample.'},
     {q:'What is a sound way to investigate a threshold?',answers:['Declare it after one noiseless run','Use one distance and ignore uncertainty','Compare multiple distances across noise rates with enough samples and uncertainty estimates'],correct:2,explain:'Threshold behavior concerns scaling with distance and noise. A small isolated experiment is not enough to establish it.'}
+  ],
+  [
+    {q:'What does Sinter coordinate in this tutorial?',answers:['Only the drawing of a lattice','Sampling, decoding, aggregation and resumable collection','A replacement for the circuit noise model'],correct:1,explain:'Stim samples the circuit, PyMatching decodes, and Sinter manages tasks, workers and collected statistics.'},
+    {q:'With max_shots=10000 and max_errors=100, what happens at 10000 shots and 12 errors?',answers:['The task stops at the shot cap','It must continue until exactly 100 errors','The result proves there are no logical errors'],correct:0,explain:'Either limit can stop a task. Rare failures may remain poorly resolved when the shot cap is reached.'},
+    {q:'What happens when you resume the same tasks and CSV with a higher shot cap?',answers:['All previous statistics are discarded','The cap always means that many additional shots','Existing matching statistics count toward the cumulative budgets'],correct:2,explain:'Sinter loads matching saved statistics. Raising the budgets extends collection; an already reached error limit can still stop a task.'},
+    {q:'Why does the script use if __name__ == "__main__"?',answers:['To turn every detector event into an error','To prevent imported worker processes from restarting collection','To force every worker to use identical random samples'],correct:1,explain:'Multiprocessing workers can import the script. The guard limits collection startup to the parent entry point.'},
+    {q:'With 10000 shots, 200 discards and 49 errors, what rate is reported?',answers:['49 / 9800 = 0.005 per retained experiment','49 / 10000, ignoring discarded shots','200 / 49 per round'],correct:0,explain:'Use errors divided by shots minus discards. This tutorial configures no postselection, so its discards should normally be zero.'}
   ]
 ];
 function restoreLearningState(saved){
-  const result={done:[],last:0,quizzes:{}};
+  const result={done:[],last:0,quizzes:{},steps:{}};
   if(!saved||typeof saved!=='object')return result;
-  if(Array.isArray(saved.done))result.done=[...new Set(saved.done.filter(i=>Number.isInteger(i)&&i>=0&&i<6))];
-  if(Number.isInteger(saved.last)&&saved.last>=0&&saved.last<6)result.last=saved.last;
+  if(Array.isArray(saved.done))result.done=[...new Set(saved.done.filter(i=>Number.isInteger(i)&&i>=0&&i<tutorialQuizzes.length))];
+  if(Number.isInteger(saved.last)&&saved.last>=0&&saved.last<tutorialQuizzes.length)result.last=saved.last;
+  [7,7,7,8,8,8,9].forEach((count,i)=>{
+    const step=saved.steps?.[i];
+    if(Number.isInteger(step)&&step>=0&&step<count)result.steps[i]=step;
+  });
   tutorialQuizzes.forEach((questions,i)=>{
     const quiz=saved.quizzes?.[i];if(!quiz||!Array.isArray(quiz.answers))return;
     const answers=questions.map((q,j)=>Number.isInteger(quiz.answers[j])&&quiz.answers[j]>=0&&quiz.answers[j]<q.answers.length?quiz.answers[j]:null);
@@ -57,7 +68,7 @@ function quizScore(questions,answers){return questions.reduce((n,q,i)=>n+Number(
 function renderTutorialQuiz(root,lessonIndex){
   const questions=tutorialQuizzes[lessonIndex];
   state.quizzes??={};const quiz=state.quizzes[lessonIndex]??={answers:Array(questions.length).fill(null),checked:false};
-  root.innerHTML=`<div class="eyebrow">TUTORIAL QUIZ · 5 QUESTIONS</div><h2>Check your understanding</h2><p>Choose one answer for each question, then check your answers. Get all five correct to complete this tutorial. You can retry as often as you like.</p>${state.done.includes(lessonIndex)?'<p class="notice">Your previous completion is saved. You can review the new quiz without losing it.</p>':''}<div class="quizquestions">${questions.map((q,i)=>`<fieldset class="quizquestion" aria-describedby="quizfeedback-${i}"><legend>${i+1}. ${escapeHTML(q.q)}</legend>${q.answers.map((answer,j)=>`<label class="quizchoice"><input type="radio" name="quiz-${lessonIndex}-${i}" value="${j}" data-quiz-question="${i}" ${quiz.answers[i]===j?'checked':''}><span>${String.fromCharCode(65+j)}. ${escapeHTML(answer)}</span></label>`).join('')}<p class="quizfeedback" id="quizfeedback-${i}"></p></fieldset>`).join('')}</div><button class="outline" id="checkquiz">Check answers</button><div class="feedback" id="quizsummary" role="status" aria-live="polite"></div><button class="primary" id="complete" disabled>Answer all five correctly to continue</button><p class="tiny">Answers and tutorial progress are saved in this browser. Revisit a tutorial to review them.</p>`;
+  root.innerHTML=`<div class="eyebrow">TUTORIAL QUIZ · 5 QUESTIONS</div><h2>Check your understanding</h2><p>Choose one answer for each question, then check your answers. Get all five correct to complete this tutorial. You can retry as often as you like.</p>${state.done.includes(lessonIndex)?'<p class="notice">Your previous completion is saved. You can review the new quiz without losing it.</p>':''}<div class="quizquestions">${questions.map((q,i)=>`<fieldset class="quizquestion" aria-describedby="quizfeedback-${i}"><legend>${i+1}. ${escapeHTML(q.q)}</legend>${q.answers.map((answer,j)=>`<label class="quizchoice"><input type="radio" name="quiz-${lessonIndex}-${i}" value="${j}" data-quiz-question="${i}" ${quiz.answers[i]===j?'checked':''}><span>${String.fromCharCode(65+j)}. ${escapeHTML(answer)}</span></label>`).join('')}<p class="quizfeedback" id="quizfeedback-${i}"></p></fieldset>`).join('')}</div><button class="outline" id="checkquiz">Check answers</button><div class="feedback" id="quizsummary" role="status" aria-live="polite"></div><button class="primary" id="complete" disabled>Pass the quiz to mark this tutorial complete</button><p class="tiny">Answers and tutorial progress are saved in this browser. Revisit a tutorial to review them.</p>`;
   function refresh(){
     const score=quizScore(questions,quiz.answers),answered=quiz.answers.filter(a=>a!==null).length,passed=quiz.checked&&score===questions.length;
     questions.forEach((q,i)=>{
@@ -66,13 +77,13 @@ function renderTutorialQuiz(root,lessonIndex){
       feedback.classList.toggle('quizwrong',quiz.checked&&selected!==q.correct);feedback.classList.toggle('quizright',quiz.checked&&selected===q.correct);
     });
     root.querySelector('#quizsummary').textContent=quiz.checked?`${score} of 5 correct. ${passed?'Quiz passed. You can now complete this tutorial.':'Review the feedback, change your answers and check again.'}`:`${answered} of 5 questions answered. Check your answers when ready.`;
-    root.querySelector('#complete').disabled=!passed;root.querySelector('#complete').textContent=passed?(state.done.includes(lessonIndex)?'Continue →':'Mark complete & continue →'):'Answer all five correctly to continue';
+    root.querySelector('#complete').disabled=!passed;root.querySelector('#complete').textContent=passed?(state.done.includes(lessonIndex)?'Continue →':'Mark complete & continue →'):'Pass the quiz to mark this tutorial complete';
   }
   root.querySelectorAll('[data-quiz-question]').forEach(input=>input.onchange=()=>{quiz.answers[+input.dataset.quizQuestion]=+input.value;quiz.checked=false;save();refresh();});
   root.querySelector('#checkquiz').onclick=()=>{quiz.checked=true;save();refresh();};
   root.querySelector('#complete').onclick=()=>{
     if(!quiz.checked||quizScore(questions,quiz.answers)!==questions.length)return;
-    if(!state.done.includes(lessonIndex))state.done.push(lessonIndex);save();update();lessonIndex<5?openLesson(lessonIndex+1):view('progress');
+    if(!state.done.includes(lessonIndex))state.done.push(lessonIndex);save();update();lessonIndex<tutorialQuizzes.length-1?openLesson(lessonIndex+1):view('progress');
   };refresh();
 }
 if(typeof module!=='undefined')module.exports={tutorialQuizzes,restoreLearningState,quizScore};

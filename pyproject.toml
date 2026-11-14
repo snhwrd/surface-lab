@@ -3,7 +3,12 @@ name = "surface-lab"
 version = "0.1.0"
 description = "Interactive introduction to surface-code quantum error correction"
 requires-python = ">=3.12"
-dependencies = ["stim>=1.15", "pymatching>=2.3", "numpy>=2.2"]
+dependencies = [
+    "stim>=1.15",
+    "pymatching>=2.3",
+    "numpy>=2.2",
+    "sinter>=1.16",
+]
 
 [dependency-groups]
 dev = ["ruff>=0.14", "ty>=0.0.1"]
