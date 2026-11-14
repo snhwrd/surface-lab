@@ -39,10 +39,12 @@ node --check web/circuit-guide.js
 node --check web/decode-guide.js
 node --check web/python-guide.js
 node --check web/quizzes.js
+node --check web/test-guide.js
 node tests/lattice.cjs
 node tests/lattice-schedule.cjs
 node tests/quizzes.cjs
 node tests/physical-layout.cjs
+node tests/test-guide.cjs
 ```
 
 CI checks and builds the site but does not deploy it. Publication is intentionally disabled pending owner review. GitHub Pages generally makes the site publicly accessible even for private source repositories; private Pages access requires an eligible enterprise configuration. Review visibility before enabling Pages.
@@ -96,3 +98,7 @@ Tutorial 5 traces the annotated generated memory circuit through a noiseless bas
 All six tutorials end with five-question quizzes (30 questions total), per-question explanations and retryable checking. A newly completed tutorial requires five correct answers checked together. Choices and checked results are saved in the existing browser-local progress record. Older completion marks are preserved; returning readers can review the new quizzes without losing completed tutorials. Changing an answer requires checking again. Reset progress clears both completion marks and quiz answers.
 
 In the playground’s physical-qubit overlay, “Align links N/S/E/W” rotates the diagram 45 degrees so all data–ancilla connections are horizontal or vertical. “Return to original grid” reverses it. Text stays upright; the selected check, distance and inserted errors are preserved. A compass marks screen directions in the cardinal view. This is a display rotation, not a change to the logical code or gate schedule.
+
+## Guided surface-code testing
+
+Tutorial 6 is an eight-step comparison guide linked to the decoding tutorial, with a browser calculator for binomial counts and nominal two-sided 95% Wilson intervals. The complete example is `examples/test_surface_code.py`: compare distances 3 and 5 at three Clifford-depolarization settings with an explicitly fixed round count, run noiseless sanity checks first, and save rates, seeds and interval endpoints to CSV. Run `uv run python examples/test_surface_code.py --shots 10000 --rounds 3 --output results.csv`. Output files are written anew. The guide distinguishes fixed-duration comparisons from rounds = distance, one-sided zero-event bounds from two-sided intervals, and exploratory scaling from threshold claims. The five-question quiz remains at the end.

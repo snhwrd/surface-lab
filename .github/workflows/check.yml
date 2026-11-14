@@ -17,6 +17,7 @@ jobs:
       - run: uv run python examples/construct_circuit.py
       - run: uv run python examples/detect_decode.py
       - run: uv run python examples/python_meets_quantum.py
+      - run: uv run python examples/test_surface_code.py --shots 1000 --output /tmp/surface-code-results.csv
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -30,7 +31,9 @@ jobs:
       - run: node --check web/decode-guide.js
       - run: node --check web/python-guide.js
       - run: node --check web/quizzes.js
+      - run: node --check web/test-guide.js
       - run: node tests/lattice.cjs
       - run: node tests/lattice-schedule.cjs
       - run: node tests/quizzes.cjs
       - run: node tests/physical-layout.cjs
+      - run: node tests/test-guide.cjs
