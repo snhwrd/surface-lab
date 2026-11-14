@@ -1,0 +1,20 @@
+cmake_minimum_required(VERSION 3.20)
+project(surface_lab_stim LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 20)
+if(NOT DEFINED STIM_SOURCE)
+  message(FATAL_ERROR "Pass -DSTIM_SOURCE=/path/to/pinned/Stim")
+endif()
+file(GLOB_RECURSE STIM_FILES CONFIGURE_DEPENDS "${STIM_SOURCE}/src/stim/*.cc")
+list(FILTER STIM_FILES EXCLUDE REGEX "\\.(test|perf|pybind)\\.cc$")
+list(FILTER STIM_FILES EXCLUDE REGEX "/main\\.cc$")
+add_library(stim STATIC ${STIM_FILES})
+target_include_directories(stim PUBLIC "${STIM_SOURCE}/src")
+target_compile_options(stim PRIVATE -O2 -fexceptions)
+add_executable(stim_engine stim_bridge.cc)
+target_link_libraries(stim_engine PRIVATE stim)
+target_compile_options(stim_engine PRIVATE -O2 -fexceptions)
+target_link_options(stim_engine PRIVATE -O2 -fexceptions --bind --no-entry
+  -sMODULARIZE=1 -sEXPORT_NAME=createStimWasm -sENVIRONMENT=web,worker,node
+  -sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=33554432 -sMAXIMUM_MEMORY=268435456
+  -sFILESYSTEM=0 -sDISABLE_EXCEPTION_CATCHING=0)
+set_target_properties(stim_engine PROPERTIES SUFFIX ".js")

@@ -47,7 +47,7 @@ node tests/physical-layout.cjs
 node tests/test-guide.cjs
 ```
 
-CI checks and builds the site but does not deploy it. Publication is intentionally disabled pending owner review. GitHub Pages generally makes the site publicly accessible even for private source repositories; private Pages access requires an eligible enterprise configuration. Review visibility before enabling Pages.
+GitHub Pages compatibility is a mandatory [project requirement](docs/requirements.md). The site must work entirely as static files, including under a repository subpath such as `/surface-lab/`. CI checks the bundled Stim WASM engine and the built Pages artifact. The manual-only **Publish GitHub Pages** workflow publishes `dist/` when explicitly run after configuring Pages to use GitHub Actions. It is not run by pushes. The repository remains private; review site visibility before publishing.
 
 ## Sources
 
@@ -102,3 +102,11 @@ In the playground’s physical-qubit overlay, “Align links N/S/E/W” rotates 
 ## Guided surface-code testing
 
 Tutorial 6 is an eight-step comparison guide linked to the decoding tutorial, with a browser calculator for binomial counts and nominal two-sided 95% Wilson intervals. The complete example is `examples/test_surface_code.py`: compare distances 3 and 5 at three Clifford-depolarization settings with an explicitly fixed round count, run noiseless sanity checks first, and save rates, seeds and interval endpoints to CSV. Run `uv run python examples/test_surface_code.py --shots 10000 --rounds 3 --output results.csv`. Output files are written anew. The guide distinguishes fixed-duration comparisons from rounds = distance, one-sided zero-event bounds from two-sided intervals, and exploratory scaling from threshold claims. The five-question quiz remains at the end.
+
+## Circuit playground
+
+Open “Circuit playground” or `#circuit-playground`. Edit Stim instructions, toggle between text and Stim’s native circuit diagram, and sample measurement records locally in a Web Worker. Examples include Bell pairs, four-data-qubit surface-code checks, noise, and the tutorial’s three-round distance-3 circuit. Download circuits as `.stim` and shot records as CSV.
+
+The bundled engine is real Stim 1.16.0 compiled to WebAssembly with a JavaScript interface; Pyodide and a Python backend are unnecessary. Assets resolve relative to the site, so the playground also works on GitHub Pages. Limits and a Stop button bound execution. Results are raw measurements, not decoded detector events. See [WASM build instructions](wasm/README.md) for the pinned source, toolchain, and resource limits.
+
+After building, run `node tests/stim-wasm.cjs` and `node tests/pages-compat.cjs`.

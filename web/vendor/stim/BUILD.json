@@ -1,0 +1,10 @@
+{
+  "library": "Stim",
+  "version": "1.16.0",
+  "source": "https://github.com/quantumlib/Stim",
+  "commit": "e2fc1eca7fd21684d433aa5f10f4504ea4860d07",
+  "toolchain": "Emscripten 4.0.20",
+  "binding": "wasm/stim_bridge.cc",
+  "build": "bash wasm/build.sh",
+  "license": "Apache-2.0"
+}
