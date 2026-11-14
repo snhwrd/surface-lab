@@ -37,8 +37,11 @@ node --check web/lattice-lesson.js
 node --check web/surface-check.js
 node --check web/circuit-guide.js
 node --check web/decode-guide.js
+node --check web/python-guide.js
+node --check web/quizzes.js
 node tests/lattice.cjs
 node tests/lattice-schedule.cjs
+node tests/quizzes.cjs
 ```
 
 CI checks and builds the site but does not deploy it. Publication is intentionally disabled pending owner review. GitHub Pages generally makes the site publicly accessible even for private source repositories; private Pages access requires an eligible enterprise configuration. Review visibility before enabling Pages.
@@ -84,3 +87,9 @@ Tutorial 4 continues the exact patch mapping and four-layer schedule from Tutori
 ## Guided detection and decoding
 
 Tutorial 5 traces the annotated generated memory circuit through a noiseless baseline, noisy detector sampling, detector-error-model construction, matching, logical-flip prediction, and failure-rate reporting. An illustrative shot selector separates detector events from decoding failures, and review buttons open the relevant circuit-guide step. Run `uv run python examples/detect_decode.py` for the complete 10,000-shot example. Ground-truth observable flips are used only for evaluation, not as decoder inputs. The reported logical-Z memory error rate is per complete experiment, not a full logical-channel benchmark or a per-round error rate.
+
+## First Python tutorial and quizzes
+
+“Python meets quantum” is a seven-step introduction to workspace setup, variables and lists, Stim circuit preparation, H and Z-basis measurement, shot arrays, counting, and deterministic comparison circuits. Run `uv run python examples/python_meets_quantum.py` for the complete example.
+
+All six tutorials end with five-question quizzes (30 questions total), per-question explanations and retryable checking. A newly completed tutorial requires five correct answers checked together. Choices and checked results are saved in the existing browser-local progress record. Older completion marks are preserved; returning readers can review the new quizzes without losing completed tutorials. Changing an answer requires checking again. Reset progress clears both completion marks and quiz answers.
