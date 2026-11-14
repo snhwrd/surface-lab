@@ -43,3 +43,4 @@ jobs:
       - run: node tests/pages-compat.cjs
       - run: node --check web/tutorial-circuits.js
       - run: node tests/tutorial-circuits.cjs
+      - run: node --check web/circuit-gallery.js
