@@ -33,7 +33,9 @@ node --check web/app.js
 node --check web/lattice.js
 node --check web/notation.js
 node --check web/surface-view.js
+node --check web/lattice-lesson.js
 node tests/lattice.cjs
+node tests/lattice-schedule.cjs
 ```
 
 CI checks and builds the site but does not deploy it. Publication is intentionally disabled pending owner review. GitHub Pages generally makes the site publicly accessible even for private source repositories; private Pages access requires an eligible enterprise configuration. Review visibility before enabling Pages.
@@ -65,3 +67,7 @@ Open “Stabilizer notation” in the navigation, or link directly with `/#notat
 ## Physical-qubit view
 
 In “Lattice playground,” toggle “Show data and ancilla roles” to inspect the selected patch. The distance selector, inserted X/Z pattern and decoder results are shared between both views. Toggle off to resume inserting errors. The legacy `/#surface-code` link opens the playground with the toggle enabled. Data qubits are labeled D0, D1, …; dedicated X- and Z-check ancillas are labeled AX0, … and AZ0, …. Selecting an ancilla highlights its support and CNOT control-to-target arrows, with preparation and measurement instructions. Selecting data lists its neighboring checks and its role in each. The physical-qubit count is `2*d*d - 1`, assuming one dedicated ancilla per generator. The diagram explains connectivity and does not prescribe a fault-tolerant gate schedule.
+
+## Guided lattice construction
+
+Tutorial 3 builds the distance-3 patch in seven illustrated steps, with a selectable four-layer CNOT schedule. For this site’s orientation (screen y increases downward), X ancillas visit SE, NE, SW, NW; Z ancillas visit SE, SW, NE, NW. Missing boundary corners are skipped. Generator commutation, gate ordering, and syndrome-record ordering are treated separately. Schedule tests check physical-qubit conflicts and conjugate every ancilla measurement backwards through the complete circuit to verify its measured generator, including signs. They also check bulk hook-pair orientation. The lesson discusses initialization-dependent first results and repeated-round comparisons.
