@@ -4,24 +4,49 @@
 .circuitfigure{margin:20px 0}.circuitcanvas{overflow-x:auto;background:#f7f9f8;border:1px solid var(--line);border-radius:8px;padding:12px}.circuitcanvas svg{display:block;width:100%;min-width:490px}.circuitfigure figcaption{font-size:12px;line-height:1.7;color:#64757d;margin-top:10px}.circuitcard{margin:24px 0}.circuitcard pre{white-space:pre;}.circuitlink{margin:16px 0}
 .paritycomparison{display:grid;gap:24px;margin-top:24px}.paritycomparison>section{padding:16px;border:1px solid var(--line);border-radius:8px}.paritycomparison h3{margin:0}.paritycomparison .circuitfigure{margin-bottom:0}@media(min-width:1250px){.circuitcard .paritycomparison{grid-template-columns:1fr 1fr}}
 
-/* Keep wide code and circuits inside the mobile viewport. */
-main,.content,.lessonbody,.lessonbody>.panel,.paritycomparison>section{min-width:0}
-@media(max-width:720px){
-  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
-  #lessonpage h1{font-size:25px;line-height:1.2;letter-spacing:-.7px}
-  #lessonpage>p{font-size:13px}
-  #lessonpage .panel{padding:18px}
-  #lessonpage .panel h3{font-size:17px;line-height:1.35}
-  #lessonpage .panel p,#lessonpage .panel li{font-size:12px;line-height:1.65}
-  #lessonpage pre,.circuitcard pre{font-size:11px;line-height:1.65;padding:14px;white-space:pre;max-width:100%;overflow-x:auto}
-  #lessonpage .choice{font-size:12px;line-height:1.5;min-height:44px}
-  #lessonpage .feedback,#lessonpage .notice{font-size:12px;line-height:1.6}
-  .codebar{gap:10px;flex-wrap:wrap}
-  .codebar span{font-size:10px}
-  .paritycomparison{gap:16px}
-  .paritycomparison>section{padding:10px}
-  .circuitcanvas{padding:6px}
-  .circuitcanvas svg{min-width:0;height:auto}
-  .circuitfigure figcaption{font-size:12px;line-height:1.6}
+/* Fluid layout: size panels by their available space, including beside the sidebar. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+main,.content,.lessonbody,.panel,.paritycomparison>section,.card,.stat{min-width:0}
+.shell{grid-template-columns:clamp(190px,18vw,245px) minmax(0,1fr)}
+.content{width:100%;padding:clamp(18px,3vw,45px);container-type:inline-size;container-name:content}
+header{padding-inline:clamp(18px,3vw,45px);gap:12px}
+h1,#lessonpage h1{font-size:clamp(25px,2vw + 16px,37px);line-height:1.18;letter-spacing:-.03em;overflow-wrap:anywhere}
+h2{font-size:clamp(20px,1vw + 14px,24px)}
+#lessonpage .panel h3,.panel h3{font-size:clamp(17px,.5vw + 14px,20px);line-height:1.35}
+#lessonpage>p{font-size:clamp(13px,.3vw + 11px,15px)}
+#lessonpage .panel p,#lessonpage .panel li,.panel p,.panel li{font-size:clamp(12px,.2vw + 11px,14px);line-height:1.7}
+.cards{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.lessonbody{grid-template-columns:minmax(0,1fr);gap:clamp(16px,2vw,24px)}
+.panel,#lessonpage .panel{padding:clamp(16px,2vw,26px)}
+pre,#lessonpage pre,.circuitcard pre{font-size:clamp(11px,.2vw + 10px,13px);line-height:1.65;padding:clamp(12px,1.5vw,22px);white-space:pre;max-width:100%;overflow-x:auto}
+.codebar{gap:10px;flex-wrap:wrap}.codebar span{font-size:clamp(10px,.15vw + 9px,12px)}
+.choice,#lessonpage .choice{font-size:clamp(12px,.2vw + 11px,14px);line-height:1.5;min-height:44px}
+.feedback,#lessonpage .feedback,.notice,#lessonpage .notice{font-size:clamp(12px,.15vw + 11px,14px);line-height:1.6}
+.paritycomparison{grid-template-columns:minmax(0,1fr);gap:clamp(16px,2vw,24px)}
+.paritycomparison>section{padding:clamp(10px,1.2vw,16px)}
+.circuitcanvas{padding:clamp(6px,1vw,12px)}
+.circuitcanvas svg{min-width:0;width:100%;height:auto}
+.circuitfigure figcaption{font-size:clamp(12px,.15vw + 11px,14px);line-height:1.65}
+.intro,.sectionhead,.progressrow,footer{gap:16px;flex-wrap:wrap}
+.intro>div,.progressrow>span{min-width:0;flex:1 1 200px}
+.intro>.outline,.progressrow>.outline{flex-shrink:0}
+.resource{overflow-wrap:anywhere}
+.hero{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+.hero h2{font-size:clamp(24px,1.5vw + 12px,29px)}
+.latticewrap svg{width:min(100%,310px)}
+.stats{grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:clamp(8px,1.5vw,18px)}
+.stat strong{font-size:clamp(16px,1vw + 10px,19px)}.stat small{font-size:11px}
+aside{overflow-y:auto}.nav{min-height:44px}
+@container content (min-width:850px){.lessonbody{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}.circuitcard .paritycomparison{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@container content (max-width:560px){.hero{grid-template-columns:minmax(0,1fr)}.herotext{padding:22px}.latticewrap{height:230px}.statIcon{display:none}}
+@media(max-width:800px){
+  .shell{display:block}
+  aside{height:auto;position:relative;padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:6px;border-bottom:1px solid var(--line)}
+  .brand{grid-column:1/-1;margin-bottom:8px;font-size:20px}
+  .brand small,.navlabel,.asidebottom{display:none}
+  .nav{width:100%;margin:0;padding:10px;font-size:12px}.nav span{margin-right:7px}
+  header{min-height:55px;height:auto;padding-block:10px}.headerRight .pill{display:none}
+  .breadcrumb{min-width:0;overflow-wrap:anywhere}.headerRight{flex-shrink:0}
+  .hero{display:grid}.herometa{display:block;margin:12px 0 0}
 }
 </style></head><body><div class="shell"><aside><div class="brand"><i class="mark"></i><div>surface lab<small>QUANTUM, STEP BY STEP</small></div></div><div class="navlabel">WORKSPACE</div><button class="nav active" data-view="overview"><span>▦</span> Learning path</button><button class="nav" data-view="circuits"><span>⊕</span> Circuit diagrams</button><button class="nav" data-view="playground"><span>⌘</span> Lattice playground</button><button class="nav" data-view="progress"><span>◷</span> My progress</button><button class="nav" data-view="resources"><span>▤</span> Resources</button><div class="asidebottom"><strong>Your learning journey</strong><div class="track"><div class="fill" id="sidefill"></div></div><div class="tiny" id="sideprogress"></div><div class="tiny">A little progress, every day.</div></div></aside><main><header><div class="breadcrumb">Workspace &nbsp; / &nbsp; <b id="crumb">Learning path</b></div><div class="headerRight"><span class="pill">◉ &nbsp; Beginner friendly</span><span class="avatar">YOU</span></div></header><div class="content"><div id="overview"><div class="intro"><div><div class="eyebrow">YOUR QUANTUM JOURNEY STARTS HERE</div><h1>Small steps. Logical breakthroughs.</h1><p>Learn to build, simulate, and test a 2D surface code with Python.</p></div><button class="outline" id="viewprogress">View progress ↗</button></div><section class="hero"><div class="herotext"><span class="tag">HANDS-ON LEARNING PATH</span><h2>Build your first<br>error-corrected qubit.</h2><p>Go from Python basics to a working surface code. Understand the ideas, explore the lattice, and put theory into practice.</p><button class="primary" id="start">Start learning &nbsp; →</button><span class="herometa">6 tutorials · ~90 minutes</span></div><div class="latticewrap" id="heroart"></div></section><div class="stats"><div class="stat"><span class="statIcon">▤</span><div><strong>6 tutorials</strong><small>One concept at a time</small></div></div><div class="stat"><span class="statIcon">⌘</span><div><strong>Learn by doing</strong><small>Python + interactive experiments</small></div></div><div class="stat"><span class="statIcon">◉</span><div><strong id="statprogress">0 of 6 complete</strong><small>Pick up where you left off</small></div></div></div><div class="sectionhead"><div><h2>Your learning path</h2><p>A guided route from your first qubit to quantum error correction.</p></div><span>6 tutorials &nbsp; • &nbsp; Work at your own pace</span></div><div class="cards" id="cards"></div><footer><span>Built for curious minds. No quantum experience required.</span><span>POWERED BY PYTHON · STIM · PYMATCHING</span></footer></div><div id="lessonpage" class="hidden"></div><div id="otherpage" class="hidden"></div></div></main></div><script src="app.js"></script></body></html>
